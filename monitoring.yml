@@ -11,13 +11,21 @@ services:
         hostname: prometheus
         restart: always
         volumes:
-            - ${VOLUMES_CONFIG}prometheus.yml:/etc/prometheus/prometheus.yml
-            - ${VOLUMES_CONFIG}node_down.yml:/etc/prometheus/node_down.yml
-            - ${VOLUMES_CONFIG}alertmanager.yml:/etc/prometheus/alertmanager.yml
+            - ${VOLUMES_CONFIG}prometheus.yml:/etc/prometheus/prometheus.yml:ro
+            - ${VOLUMES_CONFIG}node_down.yml:/etc/prometheus/node_down.yml:ro
         ports:
             - "9090:9090"
         networks:
             - ${NETWORKS}
+
+    alertmanager:
+      image: prom/alertmanager
+      volumes:
+        - ${VOLUMES_CONFIG}/alertmanager.yml:/etc/alertmanager/config.yml:ro
+      ports:
+        - "9093:9093"
+      networks:
+        - ${NETWORKS}
 
     node-exporter:
         image: quay.io/prometheus/node-exporter:latest
@@ -78,7 +86,7 @@ services:
           - ENABLE_METRICS="true"
           - IGNORE_HTTPS_ERRORS="true"
         ports:
-          - 8081:8081
+          - "8081:8081"
         networks:
           - ${NETWORKS}
 
