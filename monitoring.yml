@@ -13,7 +13,7 @@ services:
         volumes:
             - ${VOLUMES_CONFIG}prometheus.yml:/etc/prometheus/prometheus.yml
             - ${VOLUMES_CONFIG}node_down.yml:/etc/prometheus/node_down.yml
-            - ${VOLUMES_CONFIG}alertmanager.yml:/etc/prometheus/node_down.yml
+            - ${VOLUMES_CONFIG}alertmanager.yml:/etc/prometheus/alertmanager.yml
         ports:
             - "9090:9090"
         networks:
