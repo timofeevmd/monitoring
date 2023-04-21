@@ -11,8 +11,9 @@ services:
         hostname: prometheus
         restart: always
         volumes:
-            - ${VOLUMES_CONFIG}prometheus_macos.yml:/etc/prometheus/prometheus.yml
+            - ${VOLUMES_CONFIG}prometheus.yml:/etc/prometheus/prometheus.yml
             - ${VOLUMES_CONFIG}node_down.yml:/etc/prometheus/node_down.yml
+            - ${VOLUMES_CONFIG}alertmanager.yml:/etc/prometheus/node_down.yml
         ports:
             - "9090:9090"
         networks:
@@ -39,7 +40,7 @@ services:
             - /sys:/sys:ro
             - /var/lib/docker/:/var/lib/docker:ro
             - /cgroup:/sys/fs/cgroup:ro
-        cgroup_parent: m-executor-abcd
+        cgroup_parent: system.slice
         ports:
           - "8080:8080"
         networks:
