@@ -3,6 +3,7 @@ version: "3.8"
 networks:
     monitor:
         driver: bridge
+        name: monitoring_monitor
 
 services:
     prometheus:
@@ -16,23 +17,24 @@ services:
         ports:
             - "9091:9090"
         networks:
-            - ${NETWORKS}
+            - monitor
 
     node-exporter:
         image: quay.io/prometheus/node-exporter:latest
-        container_name: node-exporter
+        container_name: node_exporter
         hostname: node-exporter
         restart: always
         ports:
-            - "9101:9100"
+            - "9100:9100"
         networks:
-            - ${NETWORKS}
+            - monitor
 
     cadvisor:
         image: gcr.io/cadvisor/cadvisor:latest
         container_name: cadvisor
         hostname: cadvisor
         restart: always
+        command: --port=8081
         volumes:
             - /:/rootfs:ro
             - /var/run/docker.sock:/var/run/docker.sock:rw
@@ -40,9 +42,9 @@ services:
             - /var/lib/docker/:/var/lib/docker:ro
         cgroup_parent: system.slice
         ports:
-          - "8081:8080"
+          - "8081:8081"
         networks:
-          - ${NETWORKS}
+          - monitor
 
     grafana:
         image: grafana/grafana:latest
@@ -52,10 +54,10 @@ services:
         ports:
             - "3001:3000"
         environment:
-          - GF_SERVER_DOMAIN=localhost:3000
-          - GF_RENDERING_CALLBACK_URL=http://grafana:3000/
+          - GF_SERVER_DOMAIN=localhost:3001
+          - GF_RENDERING_CALLBACK_URL=http://grafana:3001/
           - GF_LOG_FILTERS="debug"
           - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
           - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
         networks:
-            - ${NETWORKS}
+            - monitor
